@@ -3,6 +3,7 @@ package ECoffee.services;
 import ECoffee.entities.User;
 import ECoffee.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service("userService")
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
     @Autowired

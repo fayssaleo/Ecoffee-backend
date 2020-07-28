@@ -4,6 +4,7 @@ package ECoffee.entities;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "Room")
@@ -15,10 +16,12 @@ public class Room {
     private Integer idRoom;
     @Column(name = "Name")
     private String Name;
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DateCreation")
-    private DateTimeFormat DateCreation;
+    private Date DateCreation;
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "EndingDate")
-    private DateTimeFormat EndingDate;
+    private Date EndingDate;
     //Constructors
     public Room() {
     }
@@ -46,19 +49,19 @@ public class Room {
         Name = name;
     }
 
-    public DateTimeFormat getDateCreation() {
+    public Date getDateCreation() {
         return DateCreation;
     }
 
-    public void setDateCreation(DateTimeFormat dateCreation) {
+    public void setDateCreation(Date dateCreation) {
         DateCreation = dateCreation;
     }
 
-    public DateTimeFormat getEndingDate() {
+    public Date getEndingDate() {
         return EndingDate;
     }
 
-    public void setEndingDate(DateTimeFormat endingDate) {
+    public void setEndingDate(Date endingDate) {
         EndingDate = endingDate;
     }
 }
