@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "Room")
@@ -12,7 +13,7 @@ public class Room {
     //attributs
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "Room_id")
+    @Column(name = "room_id")
     private Integer idRoom;
     @Column(name = "Name")
     private String Name;
@@ -22,6 +23,13 @@ public class Room {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "EndingDate")
     private Date EndingDate;
+
+    //join
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "UsersRoom", joinColumns = {@JoinColumn(name = "room", referencedColumnName = "room_id")},
+            inverseJoinColumns = {
+                    @JoinColumn(name = "usersRoom_id", referencedColumnName = "usersRoom_id")})
+    private Set<UsersRoom> Ur;
     //Constructors
     public Room() {
     }

@@ -4,6 +4,7 @@ import com.mysql.cj.x.protobuf.MysqlxResultset;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "SimpleUser")
@@ -13,10 +14,12 @@ public class SimpleUser extends User{
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
     private Integer id;
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "CreatedAt")
-    private DateTimeFormat CreatedAt;
+    private Date CreatedAt;
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "UpdatedAt")
-    private DateTimeFormat UpdatedAt;
+    private Date UpdatedAt;
 
     //constructor
     public SimpleUser() {
@@ -41,19 +44,19 @@ public class SimpleUser extends User{
         this.id = id;
     }
 
-    public DateTimeFormat getCreatedAt() {
+    public Date getCreatedAt() {
         return CreatedAt;
     }
 
-    public void setCreatedAt(DateTimeFormat createdAt) {
+    public void setCreatedAt(Date createdAt) {
         CreatedAt = createdAt;
     }
 
-    public DateTimeFormat getUpdatedAt() {
+    public Date getUpdatedAt() {
         return UpdatedAt;
     }
 
-    public void setUpdatedAt(DateTimeFormat updatedAt) {
+    public void setUpdatedAt(Date updatedAt) {
         UpdatedAt = updatedAt;
     }
 }

@@ -1,30 +1,38 @@
 package ECoffee.entities;
 
-import com.mysql.cj.x.protobuf.MysqlxResultset;
+import org.springframework.data.annotation.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.Collection;
+import java.util.Set;
 
 
 @Entity
-@Table(name = "user")
+@Table(name = "User")
 public class User  implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
     private Integer id;
-    @Column(name = "UserName")
+    @Column(name = "username", nullable = false, unique = true)
     @NotEmpty(message = "Please provide your first name")
-    private String UserName;
-    @org.springframework.data.annotation.Transient
+    private String username;
+    @Transient
     private String password;
     @Column(name = "enabled")
     private boolean enabled;
     @Column(name = "confirmation_token")
     private String confirmationToken;
 
+    //join
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "UsersRoom", joinColumns = {@JoinColumn(name = "user", referencedColumnName = "user_id")},
+            inverseJoinColumns = {
+                    @JoinColumn(name = "usersRoom_id", referencedColumnName = "usersRoom_id")})
+    private Set<UsersRoom> Ur;
 
     //constructor
     public User() {
@@ -32,7 +40,7 @@ public class User  implements UserDetails {
 
     public User(User user) {
         this.id = user.getId();
-        this.UserName = user.getUsername();
+        this.username = user.getUsername();
         this.password = user.getPassword();
         this.enabled = user.isEnabled();
         this.confirmationToken = user.confirmationToken;
@@ -47,11 +55,11 @@ public class User  implements UserDetails {
     }
 
     public String getUserName() {
-        return UserName;
+        return username;
     }
 
-    public void setUserName(String userName) {
-        UserName = userName;
+    public void setUserName(String username) {
+        username = username;
     }
 
     public void setPassword(String password) {
