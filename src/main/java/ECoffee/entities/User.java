@@ -28,11 +28,8 @@ public class User  implements UserDetails {
     private String confirmationToken;
 
     //join
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "UsersRoom", joinColumns = {@JoinColumn(name = "user", referencedColumnName = "user_id")},
-            inverseJoinColumns = {
-                    @JoinColumn(name = "usersRoom_id", referencedColumnName = "usersRoom_id")})
-    private Set<UsersRoom> Ur;
+    @OneToMany
+    private Set<UsersRoom> rooms;
 
     //constructor
     public User() {

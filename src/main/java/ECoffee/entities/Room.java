@@ -14,7 +14,7 @@ public class Room {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "room_id")
-    private Integer idRoom;
+    private Integer id;
     @Column(name = "Name")
     private String Name;
     @Temporal(TemporalType.TIMESTAMP)
@@ -25,16 +25,13 @@ public class Room {
     private Date EndingDate;
 
     //join
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "UsersRoom", joinColumns = {@JoinColumn(name = "room", referencedColumnName = "room_id")},
-            inverseJoinColumns = {
-                    @JoinColumn(name = "usersRoom_id", referencedColumnName = "usersRoom_id")})
-    private Set<UsersRoom> Ur;
+    @OneToMany
+    private Set<UsersRoom> users;
     //Constructors
     public Room() {
     }
     public Room(Room room) {
-        this.idRoom = room.getIdRoom();
+        this.id = room.getIdRoom();
         this.Name = room.getName();
         this.DateCreation = room.getDateCreation();
         this.EndingDate = room.getEndingDate();
@@ -42,11 +39,11 @@ public class Room {
     //getters & setters
 
     public Integer getIdRoom() {
-        return idRoom;
+        return id;
     }
 
-    public void setIdRoom(Integer idRoom) {
-        this.idRoom = idRoom;
+    public void setIdRoom(Integer id) {
+        this.id= id;
     }
 
     public String getName() {

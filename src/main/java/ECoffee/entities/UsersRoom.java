@@ -1,21 +1,20 @@
 package ECoffee.entities;
 
-import org.apache.tomcat.jni.User;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
 @Entity
 @Table(name = "UsersRoom")
-public class UsersRoom {
+@IdClass(UsersRoomId.class)
+public class UsersRoom implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "usersRoom_id")
-    private Integer id;
     @Column(name = "user")
     private Integer idUser;
+    @Id
     @Column(name = "room")
     private Integer idRoom;
     @Temporal(TemporalType.TIMESTAMP)
@@ -24,15 +23,11 @@ public class UsersRoom {
     @Column(name = "owner")
     private boolean Owner;
     //Join
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name = "User", joinColumns = {@JoinColumn(name = "usersRoom_id", referencedColumnName = "usersRoom_id")},
-            inverseJoinColumns = {
-                    @JoinColumn(name = "user", referencedColumnName = "user_id")})
+    @ManyToOne
+    @PrimaryKeyJoinColumn(name="user_id", referencedColumnName="id")
     private User user;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name = "Room", joinColumns = {@JoinColumn(name = "usersRoom_id", referencedColumnName = "usersRoom_id")},
-            inverseJoinColumns = {
-                    @JoinColumn(name = "room", referencedColumnName = "room_id")})
+    @ManyToOne
+    @PrimaryKeyJoinColumn(name="room_id", referencedColumnName="id")
     private Room room;
 
     //Constructors
@@ -40,7 +35,6 @@ public class UsersRoom {
     public UsersRoom() {
     }
     public UsersRoom(UsersRoom Ur) {
-        this.id = Ur.getId();
         this.idUser = Ur.getIdUser();
         this.idRoom = Ur.getIdRoom();
         this.date = Ur.getDate();
@@ -48,14 +42,6 @@ public class UsersRoom {
     }
 
     //getters & setters
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getIdUser() {
         return idUser;

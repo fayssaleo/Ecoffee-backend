@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableAutoConfiguration
-@EntityScan
+@EntityScan(basePackages = {"ECoffee.entities", "ECoffee.repositories", "ECoffee.sevices","ECoffee.config","ECoffee.exceptions"})
 public class ECoffeApplication {
 
 	public static void main(String[] args) {
