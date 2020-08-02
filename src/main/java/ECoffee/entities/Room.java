@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -25,8 +26,8 @@ public class Room {
     private Date EndingDate;
 
     //join
-    @OneToMany
-    private Set<UsersRoom> users;
+    @OneToMany(mappedBy = "user")
+    private Set<UsersRoom> users = new HashSet<UsersRoom>();
     //Constructors
     public Room() {
     }

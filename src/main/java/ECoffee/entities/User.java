@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -28,8 +29,8 @@ public class User  implements UserDetails {
     private String confirmationToken;
 
     //join
-    @OneToMany
-    private Set<UsersRoom> rooms;
+    @OneToMany(mappedBy = "room")
+    private Set<UsersRoom> rooms = new HashSet<UsersRoom>();
 
     //constructor
     public User() {

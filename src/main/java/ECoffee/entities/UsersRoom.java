@@ -9,14 +9,9 @@ import java.util.Set;
 
 @Entity
 @Table(name = "UsersRoom")
-@IdClass(UsersRoomId.class)
 public class UsersRoom implements Serializable {
-    @Id
-    @Column(name = "user")
-    private Integer idUser;
-    @Id
-    @Column(name = "room")
-    private Integer idRoom;
+    @EmbeddedId
+    private UsersRoomId id;
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "date")
     private Date date;
@@ -24,10 +19,12 @@ public class UsersRoom implements Serializable {
     private boolean Owner;
     //Join
     @ManyToOne
-    @PrimaryKeyJoinColumn(name="user_id", referencedColumnName="id")
+    @MapsId("user_id")
+    @JoinColumn(name="user_id")
     private User user;
     @ManyToOne
-    @PrimaryKeyJoinColumn(name="room_id", referencedColumnName="id")
+    @MapsId("room_id")
+    @JoinColumn(name="room_id")
     private Room room;
 
     //Constructors
@@ -35,29 +32,12 @@ public class UsersRoom implements Serializable {
     public UsersRoom() {
     }
     public UsersRoom(UsersRoom Ur) {
-        this.idUser = Ur.getIdUser();
-        this.idRoom = Ur.getIdRoom();
         this.date = Ur.getDate();
         this.Owner = Ur.isOwner();
     }
 
     //getters & setters
 
-    public Integer getIdUser() {
-        return idUser;
-    }
-
-    public void setIdUser(Integer idUser) {
-        this.idUser = idUser;
-    }
-
-    public Integer getIdRoom() {
-        return idRoom;
-    }
-
-    public void setIdRoom(Integer idRoom) {
-        this.idRoom = idRoom;
-    }
 
     public Date getDate() {
         return date;
