@@ -11,5 +11,4 @@ public class UsersRoomId implements Serializable {
     @Column(name = "room_id")
     private Integer idRoom;
 
-
 }
