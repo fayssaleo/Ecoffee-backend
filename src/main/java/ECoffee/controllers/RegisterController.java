@@ -1,6 +1,9 @@
 package ECoffee.controllers;
 
+import ECoffee.entities.Role;
 import ECoffee.entities.User;
+import ECoffee.services.EmailService;
+import ECoffee.services.RoleService;
 import ECoffee.services.UserService;
 import com.nulabinc.zxcvbn.Strength;
 import com.nulabinc.zxcvbn.Zxcvbn;
@@ -24,15 +27,27 @@ import java.util.UUID;
 @RestController
 @CrossOrigin(origins = "*",  allowedHeaders = "true", allowCredentials = "true", methods = {RequestMethod.OPTIONS, RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class RegisterController {
+
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private UserService userService;
+    private EmailService emailService;
+    private RoleService serviceRole;
 
     @Autowired
-    public RegisterController(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService) {
+    public RegisterController(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService, EmailService emailService, RoleService serviceRole) {
 
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userService = userService;
+        this.emailService = emailService;
+        this.serviceRole = serviceRole;
     }
+    @CrossOrigin("*")
+    @RequestMapping(value="/", method = RequestMethod.GET)
+    public String greet(){
+        return "welcome sanaa";
+    }
+
+
     // Return registration form template
     @CrossOrigin("*")
     @RequestMapping(value="/register", method = RequestMethod.GET)
@@ -45,7 +60,7 @@ public class RegisterController {
     // Process form input data
     @CrossOrigin("*")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<String> processRegistrationForm(
+    public  ResponseEntity<String> processRegistrationForm(
             @RequestBody User user, HttpServletRequest request) {
         try{
             // Lookup user in database by e-mail
@@ -56,19 +71,44 @@ public class RegisterController {
             if (userExists != null) {
                 return new ResponseEntity<>("Un autre utlisateur est déja enregistré avec le même email", HttpStatus.BAD_REQUEST);
             } else {
+                user.setUsername(user.getUsername());
+                user.setEmail(user.getEmail());
+                user.setPassword(user.getPassword());
+                Set<Role> roles = new HashSet<>();
+                for(Role role : serviceRole.listAll()){
+                    if(StringUtils.equals(user.getRoles(), user.getRoles())){
+                        roles.add(role);
+                        break;
+                    }
+                }
+                user.setRoles(roles);
+                // Disable user until they click on confirmation link in email
+                user.setEnabled(true);
 
                 // Generate random 36-character string token for confirmation link
                 user.setConfirmationToken(UUID.randomUUID().toString());
 
                 userService.save(user);
 
-                return new ResponseEntity<>("vous pouvez se connecter !", HttpStatus.OK);
+                String appUrl = request.getScheme() + "://" + request.getServerName();
+
+                SimpleMailMessage registrationEmail = new SimpleMailMessage();
+                registrationEmail.setTo(user.getEmail());
+                registrationEmail.setSubject("Registration Confirmation");
+                registrationEmail.setText("To confirm your e-mail address, please click the link below:\n"
+                        + appUrl + "/confirm?token=" + user.getConfirmationToken());
+                registrationEmail.setFrom("noreply@domain.com");
+
+                //emailService.sendEmail(registrationEmail);
+
+                return new ResponseEntity<>("Un email de confirmation a été envoyé à : " + user.getEmail(), HttpStatus.OK);
             }
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     // Process confirmation link
     @CrossOrigin("*")
     @RequestMapping(value="/confirm", method = RequestMethod.GET)
@@ -85,6 +125,7 @@ public class RegisterController {
         modelAndView.setViewName("confirm");
         return modelAndView;
     }
+
     // Process confirmation link
     @CrossOrigin("*")
     @RequestMapping(value="/confirm", method = RequestMethod.POST)
@@ -121,6 +162,4 @@ public class RegisterController {
         modelAndView.addObject("successMessage", "Your password has been set!");
         return modelAndView;
     }
-
-
 }
