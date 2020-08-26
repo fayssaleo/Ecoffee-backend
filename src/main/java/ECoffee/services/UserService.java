@@ -3,13 +3,14 @@ package ECoffee.services;
 import ECoffee.entities.User;
 import ECoffee.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
+@Primary
 @Service("userService")
 public class UserService implements UserDetailsService {
 
@@ -44,5 +45,8 @@ public class UserService implements UserDetailsService {
 
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("username not found"));
+    }
+    public User get(Integer id) {
+        return userRepository.findById(id).get();
     }
 }
