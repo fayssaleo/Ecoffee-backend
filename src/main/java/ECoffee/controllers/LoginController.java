@@ -20,8 +20,10 @@ public class LoginController {
 
         try {
 
-            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getUsername(),
-                    user.getPassword());
+            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                    user.getUsername(),
+                    user.getPassword()
+            );
 
             Authentication authentication = this.authManager.authenticate(authenticationToken);
 

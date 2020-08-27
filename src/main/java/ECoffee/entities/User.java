@@ -1,15 +1,18 @@
 package ECoffee.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Transient;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Entity
@@ -22,10 +25,9 @@ public class User  implements UserDetails {
     @Column(name = "username", nullable = false, unique = true)
     @NotEmpty(message = "Please provide your first name")
     private String username;
-    @Transient
+
+
     private String password;
-    @Email(message = "Please provide a valid e-mail")
-    private String email;
     @Column(name = "enabled")
     private boolean enabled;
     @Column(name = "confirmation_token")
@@ -61,16 +63,26 @@ public class User  implements UserDetails {
         this.id = id;
     }
 
+    @JsonProperty
     public void setPassword(String password) {
         this.password = password;
     }
 
     //implementation of UserDetails methodes
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return roles.stream().map(role-> new SimpleGrantedAuthority(
+                "ROLE_"+role.getName().toUpperCase()
+        )).collect(Collectors.toList());
     }
 
+    @JsonProperty("authorities")
+    public Collection<String> getStringAuthorities() {
+        return roles.stream().map(role-> "ROLE_"+role.getName().toUpperCase()).collect(Collectors.toList());
+    }
+
+    @JsonIgnore
     @Override
     public String getPassword() {
         return password;
@@ -81,33 +93,6 @@ public class User  implements UserDetails {
         return username;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public Set<UsersRoom> getRooms() {
-        return rooms;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public void setRooms(Set<UsersRoom> rooms) {
-        this.rooms = rooms;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -126,7 +111,7 @@ public class User  implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return true;
     }
 
     public void setEnabled(boolean enabled) {

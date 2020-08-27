@@ -18,14 +18,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 // configuration for security authentication
 @Configuration
 @EnableWebSecurity
-class WebSecurityConfig extends WebSecurityConfigurerAdapter{
+public class WebSecuriyConfig extends WebSecurityConfigurerAdapter{
 
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    @Qualifier("userService")
     private UserService userService;
 
 
