@@ -9,8 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
-@Service
+@Service("userService")
 public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
@@ -44,5 +45,8 @@ public class UserService implements UserDetailsService {
 
     public User loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("username not found"));
+    }
+    public Optional<User> get(Integer id ){
+        return userRepository.findById(id);
     }
 }

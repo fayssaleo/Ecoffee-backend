@@ -3,8 +3,10 @@ package ECoffee.controllers;
 import ECoffee.entities.User;
 import ECoffee.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +16,7 @@ import java.util.NoSuchElementException;
 @CrossOrigin(origins = "*",  allowedHeaders = "true", allowCredentials = "true", methods = {RequestMethod.OPTIONS, RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class UserController {
     @Autowired
+    @Qualifier("userService")
     private UserService service;
 
     //RESTful API that returns a list of users
@@ -28,7 +31,7 @@ public class UserController {
     @GetMapping("/user/{id}")
     public ResponseEntity<User> get(@PathVariable Integer id) {
         try {
-            User user = service.get(id);
+            User user = service.get(id).orElseThrow(() -> new NoSuchElementException("User not found"));
             return new ResponseEntity<User>(user, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<User>(HttpStatus.NOT_FOUND);
@@ -45,9 +48,12 @@ public class UserController {
     // RESTful API for update user
     @CrossOrigin("*")
     @PutMapping("/user/{id}")
-    public ResponseEntity<?> update(@RequestBody User user, @PathVariable Integer id) {
+    public ResponseEntity<?> update(
+
+            @RequestBody User user, @PathVariable Integer id) {
+
         try {
-            User existUser = service.get(id);
+            User existUser =service.get(id).orElseThrow(() -> new NoSuchElementException("User not found"));
             service.save(user);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchElementException e) {
