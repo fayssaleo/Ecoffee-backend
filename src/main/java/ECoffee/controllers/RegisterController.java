@@ -38,20 +38,22 @@ public class RegisterController {
     // Process form input data
     @CrossOrigin("*")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<String> processRegistrationForm( @RequestBody User user, HttpServletRequest request) {
+    public ResponseEntity<String> processRegistrationForm( @RequestBody User user , HttpServletRequest request) {
         try{
 
             // Lookup user in database by e-mail
             User userExists = userService.findByUsername(user.getUsername());
 
-            System.out.println(userExists);
+
 
             if (userExists != null) {
                 return new ResponseEntity<>("Un autre utlisateur est déja enregistré avec le même email", HttpStatus.BAD_REQUEST);
             } else {
-
+                System.out.println(user);
                 // Generate random 36-character string token for confirmation link
                 user.setConfirmationToken(UUID.randomUUID().toString());
+                user.setAccessToken(UUID.randomUUID().toString());
+                user.setUdateAncCreatedAt();
 
                 userService.save(user);
 

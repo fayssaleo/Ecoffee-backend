@@ -35,8 +35,8 @@ public class UserService implements UserDetailsService {
         userRepository.deleteById(id);
     }
 
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username).orElseThrow(()->new UsernameNotFoundException("user not found"));
+    public User  findByUsername(String username) {
+        return userRepository.findByUsername(username).orElse(null);
     }
 
     public User findByConfirmationToken(String confirmationToken) {

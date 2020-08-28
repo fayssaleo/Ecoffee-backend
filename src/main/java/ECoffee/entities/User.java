@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,12 +27,31 @@ public class User  implements UserDetails {
     @NotEmpty(message = "Please provide your first name")
     private String username;
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Column(name = "email", nullable = false, unique = true)
+    @NotEmpty(message = "Please provide your Email")
+    private String email;
+
 
     private String password;
     @Column(name = "enabled")
     private boolean enabled;
+
+    @Column(name = "access_token")
+    private String accessToken;
+
     @Column(name = "confirmation_token")
     private String confirmationToken;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "CreatedAt")
+    private Date CreatedAt;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "UpdatedAt")
+    private Date UpdatedAt;
 
     //join
     @OneToMany(mappedBy = "room")
@@ -50,9 +70,14 @@ public class User  implements UserDetails {
     public User(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
+        this.email = user.getEmail();
         this.password = user.getPassword();
         this.enabled = user.isEnabled();
-        this.confirmationToken = user.confirmationToken;
+
+    }
+
+    private String getEmail() {
+        return this.email;
     }
 
     //getters & setters
@@ -124,5 +149,30 @@ public class User  implements UserDetails {
 
     public void setConfirmationToken(String confirmationToken) {
         this.confirmationToken = confirmationToken;
+    }
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", enabled=" + enabled +
+                ", accessToken='" + accessToken + '\'' +
+                ", confirmationToken='" + confirmationToken + '\'' +
+                ", CreatedAt=" + CreatedAt +
+                ", UpdatedAt=" + UpdatedAt +
+                ", rooms=" + rooms +
+                ", roles=" + roles +
+                '}';
+    }
+
+    public void setUdateAncCreatedAt(){
+        this.CreatedAt=new Date();
+        this.UpdatedAt=new Date();
     }
 }
