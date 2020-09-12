@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.Set;
 
 @Entity
-@Table(name = "UsersRoom")
+@Table(name = "usersroom")
 public class UsersRoom implements Serializable {
     @EmbeddedId
     private UsersRoomId id;
