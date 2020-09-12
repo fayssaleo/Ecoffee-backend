@@ -39,6 +39,7 @@ public class RegisterController {
     @CrossOrigin("*")
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<String> processRegistrationForm( @RequestBody User user , HttpServletRequest request) {
+        System.err.println(user);
         try{
 
             // Lookup user in database by e-mail

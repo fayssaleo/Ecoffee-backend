@@ -17,14 +17,14 @@ import java.util.stream.Collectors;
 
 
 @Entity
-@Table(name = "User")
+@Table(name = "user")
 public class User  implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
     private Integer id;
     @Column(name = "username", nullable = false, unique = true)
-    @NotEmpty(message = "Please provide your first name")
+    @NotEmpty(message = "Please provide your username")
     private String username;
 
     public void setEmail(String email) {
@@ -40,6 +40,25 @@ public class User  implements UserDetails {
     @Column(name = "enabled")
     private boolean enabled;
 
+
+    @Column(name = "firstname")
+    @NotEmpty(message = "Please provide your First name")
+    private String firstname;
+
+    @Column(name = "lastname")
+    @NotEmpty(message = "Please provide your last name")
+    private String lastname;
+
+    @Column(name = "country")
+    private String country;
+
+    @Column(name = "city")
+    private String city;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "birthday")
+    private Date birthday;
+
     @Column(name = "access_token")
     private String accessToken;
 
@@ -47,10 +66,10 @@ public class User  implements UserDetails {
     private String confirmationToken;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "CreatedAt")
+    @Column(name = "createdat")
     private Date CreatedAt;
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "UpdatedAt")
+    @Column(name = "updatedat")
     private Date UpdatedAt;
 
     //join
@@ -63,19 +82,64 @@ public class User  implements UserDetails {
                     @JoinColumn(name = "role_id", referencedColumnName = "role_id")})
     private Set<Role> roles;
 
+    public String getFirstname() {
+        return firstname;
+    }
+
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public Date getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
     //constructor
     public User() {
     }
 
-    public User(User user) {
-        this.id = user.getId();
-        this.username = user.getUsername();
-        this.email = user.getEmail();
-        this.password = user.getPassword();
-        this.enabled = user.isEnabled();
-
+    public User(Integer id, @NotEmpty(message = "Please provide your username") String username, @NotEmpty(message = "Please provide your Email") String email, String password, String firstname, String lastname, String country, String city, Date birthday, boolean enabled) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.enabled = enabled;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.country = country;
+        this.city = city;
+        this.birthday = birthday;
     }
 
+    @JsonProperty("email")
     private String getEmail() {
         return this.email;
     }
@@ -102,7 +166,7 @@ public class User  implements UserDetails {
         )).collect(Collectors.toList());
     }
 
-    @JsonProperty("authorities")
+    @JsonProperty("role")
     public Collection<String> getStringAuthorities() {
         return roles.stream().map(role-> "ROLE_"+role.getName().toUpperCase()).collect(Collectors.toList());
     }
