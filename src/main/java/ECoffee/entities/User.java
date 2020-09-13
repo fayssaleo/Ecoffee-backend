@@ -82,6 +82,12 @@ public class User  implements UserDetails {
                     @JoinColumn(name = "role_id", referencedColumnName = "role_id")})
     private Set<Role> roles;
 
+
+
+    public void setUsername(String firstname) {
+        this.username = username;
+    }
+
     public String getFirstname() {
         return firstname;
     }
@@ -140,7 +146,7 @@ public class User  implements UserDetails {
     }
 
     @JsonProperty("email")
-    private String getEmail() {
+    public String getEmail() {
         return this.email;
     }
 

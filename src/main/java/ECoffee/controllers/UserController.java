@@ -47,13 +47,20 @@ public class UserController {
 
     // RESTful API for update user
     @CrossOrigin("*")
-    @PutMapping("/user/{id}")
+    @PostMapping("/user/{id}")
     public ResponseEntity<?> update(
 
             @RequestBody User user, @PathVariable Integer id) {
 
         try {
             User existUser =service.get(id).orElseThrow(() -> new NoSuchElementException("User not found"));
+            existUser.setUsername(user.getUsername());
+            existUser.setEmail(user.getEmail());
+            existUser.setFirstname(user.getFirstname());
+            existUser.setLastname(user.getLastname());
+            existUser.setCountry(user.getCountry());
+            existUser.setCity(user.getCity());
+            existUser.setBirthday(user.getBirthday());
             service.save(user);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (NoSuchElementException e) {
