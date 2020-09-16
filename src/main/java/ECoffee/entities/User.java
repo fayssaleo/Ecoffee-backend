@@ -84,7 +84,7 @@ public class User  implements UserDetails {
 
 
 
-    public void setUsername(String firstname) {
+    public void setUsername(String username) {
         this.username = username;
     }
 

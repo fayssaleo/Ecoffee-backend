@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -24,13 +25,13 @@ import java.util.UUID;
 @RestController
 @CrossOrigin(origins = "*",  allowedHeaders = "true", allowCredentials = "true", methods = {RequestMethod.OPTIONS, RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class RegisterController {
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
+    private PasswordEncoder passwordEncoder;
     private UserService userService;
 
     @Autowired
-    public RegisterController(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService) {
+    public RegisterController(PasswordEncoder passwordEncoder, UserService userService) {
 
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.passwordEncoder = passwordEncoder;
         this.userService = userService;
     }
     // Return registration form template
@@ -92,7 +93,7 @@ public class RegisterController {
         User user = userService.findByConfirmationToken((String) requestParams.get("token"));
 
         // Set new password
-        user.setPassword(bCryptPasswordEncoder.encode((CharSequence) requestParams.get("password")));
+        user.setPassword(passwordEncoder.encode((CharSequence) requestParams.get("password")));
 
         // Set user to enabled
         user.setEnabled(true);
