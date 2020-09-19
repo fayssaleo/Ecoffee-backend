@@ -1,6 +1,9 @@
 package ECoffee.controllers;
 
+import ECoffee.entities.Role;
 import ECoffee.entities.User;
+import ECoffee.repositories.RoleRepository;
+import ECoffee.services.RoleService;
 import ECoffee.services.UserService;
 import com.nulabinc.zxcvbn.Strength;
 import com.nulabinc.zxcvbn.Zxcvbn;
@@ -27,20 +30,28 @@ import java.util.UUID;
 public class RegisterController {
     private PasswordEncoder passwordEncoder;
     private UserService userService;
-
+    private RoleService roleService;
     @Autowired
-    public RegisterController(PasswordEncoder passwordEncoder, UserService userService) {
+    public RegisterController(PasswordEncoder passwordEncoder, UserService userService, RoleService roleService) {
 
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
+        this.roleService=roleService;
     }
     // Return registration form template
 
     // Process form input data
     @CrossOrigin("*")
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<String> processRegistrationForm( @RequestBody User user , HttpServletRequest request) {
+    @RequestMapping(value={"/register","/register/{roleId}"}, method = RequestMethod.POST)
+    public ResponseEntity<String> processRegistrationForm( @RequestBody User user , HttpServletRequest request, @PathVariable(required = false) Integer roleId) {
         System.err.println(user);
+        Role role;
+
+        if(roleId == null || roleId==2)
+            role= roleService.get(2);
+        else
+            role=roleService.get(1);
+        user.setRole(role);
         try{
 
             // Lookup user in database by e-mail
@@ -51,7 +62,7 @@ public class RegisterController {
             if (userExists != null) {
                 return new ResponseEntity<>("Un autre utlisateur est déja enregistré avec le même email", HttpStatus.BAD_REQUEST);
             } else {
-                System.out.println(user);
+
                 // Generate random 36-character string token for confirmation link
                 user.setConfirmationToken(UUID.randomUUID().toString());
                 user.setAccessToken(UUID.randomUUID().toString());

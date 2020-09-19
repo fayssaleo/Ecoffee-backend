@@ -2,6 +2,7 @@ package ECoffee.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.Cascade;
 import org.springframework.data.annotation.Transient;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,10 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -76,11 +74,9 @@ public class User  implements UserDetails {
     @OneToMany(mappedBy = "room")
     private Set<UsersRoom> rooms = new HashSet<UsersRoom>();
     //join
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_roles", joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "user_id")},
-            inverseJoinColumns = {
-                    @JoinColumn(name = "role_id", referencedColumnName = "role_id")})
-    private Set<Role> roles;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="role_id")
+    private Role role;
 
 
 
@@ -128,6 +124,14 @@ public class User  implements UserDetails {
         this.birthday = birthday;
     }
 
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
     //constructor
     public User() {
     }
@@ -143,6 +147,7 @@ public class User  implements UserDetails {
         this.country = country;
         this.city = city;
         this.birthday = birthday;
+
     }
 
     @JsonProperty("email")
@@ -167,14 +172,14 @@ public class User  implements UserDetails {
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream().map(role-> new SimpleGrantedAuthority(
-                "ROLE_"+role.getName().toUpperCase()
-        )).collect(Collectors.toList());
+
+        return Collections.singletonList(new SimpleGrantedAuthority(role.getName().toUpperCase()));
+
     }
 
     @JsonProperty("role")
-    public Collection<String> getStringAuthorities() {
-        return roles.stream().map(role-> "ROLE_"+role.getName().toUpperCase()).collect(Collectors.toList());
+    public String getStringAuthorities() {
+        return "ROLE_"+role.getName().toUpperCase();
     }
 
     @JsonIgnore
@@ -231,13 +236,19 @@ public class User  implements UserDetails {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
+                ", firstname=" + firstname +
+                ", lastname=" + lastname +
+                ", birthday=" + birthday +
+                ", country=" + country +
+                ", city=" + city +
                 ", enabled=" + enabled +
+
                 ", accessToken='" + accessToken + '\'' +
                 ", confirmationToken='" + confirmationToken + '\'' +
                 ", CreatedAt=" + CreatedAt +
                 ", UpdatedAt=" + UpdatedAt +
                 ", rooms=" + rooms +
-                ", roles=" + roles +
+                ((role != null)? ", role=" + role.getName().toUpperCase() : "role=null") +
                 '}';
     }
 

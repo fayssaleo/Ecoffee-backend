@@ -15,6 +15,10 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
+
+    @Autowired
+    private  RoleService roleService;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -30,7 +34,10 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
+    public void update(User user){
 
+        userRepository.save(user);
+    }
     public void delete(Integer id) {
         userRepository.deleteById(id);
     }
@@ -49,4 +56,7 @@ public class UserService implements UserDetailsService {
     public Optional<User> get(Integer id ){
         return userRepository.findById(id);
     }
+
+
+
 }
